@@ -1,10 +1,26 @@
-import { randomUUID } from "node:crypto";
-import { setTimeout as sleep } from "node:timers/promises";
+const port = Number(process.env.PORT) || 3000;
+const randomString = Math.random().toString(36).substring(2, 15);
 
-const randomString = randomUUID();
+const status = () => `${new Date().toISOString()}: ${randomString}`;
 
-while (true) {
-  const timestamp = new Date().toISOString();
-  console.log(`${timestamp}: ${randomString}`);
-  await sleep(5_000);
-}
+const logStatus = () => {
+    console.log(status());
+};
+
+logStatus();
+setInterval(logStatus, 5000);
+
+Bun.serve({
+    hostname: '0.0.0.0',
+    port,
+    fetch(request) {
+        const url = new URL(request.url);
+        if (request.method !== 'GET' || url.pathname !== '/') {
+            return new Response('Not found', { status: 404 });
+        }
+
+        return new Response(`${status()}\n`, { status: 200 });
+    },
+});
+
+console.log(`Server started in port ${port}`);
