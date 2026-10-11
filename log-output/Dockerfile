@@ -1,7 +1,6 @@
-FROM python:3.13-slim
+FROM oven/bun:1-slim
 
 WORKDIR /app
-COPY main.py .
+COPY index.ts .
 
-ENV PYTHONUNBUFFERED=1
-CMD ["python", "-u", "main.py"]
+CMD ["bun", "index.ts"]
